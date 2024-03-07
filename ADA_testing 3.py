@@ -7,6 +7,7 @@ Created on Thu Mar  7 11:51:24 2024
 """
 
 import pandas as pd
+import random as python_random
 import numpy as np
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
@@ -16,6 +17,11 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.regularizers import l2
 from collections import Counter
 
+# Set seed for reproducibility
+np.random.seed(42)
+python_random.seed(42)
+tf.random.set_seed(42)
+
 # Load data
 data = pd.read_excel('cleaned_data_23.xlsx')
 data['zip_code'] = data['zip_code'].str.extract(r'(\d+)').astype(int)
@@ -24,7 +30,7 @@ data['zip_code'] = data['zip_code'].str.extract(r'(\d+)').astype(int)
 features = data.drop(columns=['loan_is_bad']).values
 labels = data['loan_is_bad'].values
 
-# Split the data into training and testing before resampling to avoid data leakage
+# Split the data into training and testing before resampling to avoid data leakage, split both of them out y is the outcome of loan is bad
 X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=42)
 
 # Normalize all features in X_train for SMOTEENN application
@@ -42,7 +48,8 @@ X_resampled, y_resampled = smote_enn.fit_resample(X_train_normalized, y_train)
 class_distribution = Counter(y_resampled)
 print(class_distribution)
 
-# Proceed with model definition, compilation, and training as before, using X_resampled and y_resampled
+# Proceed with model definition, compilation, and training as before, using X_resampled and y_resampled, added more layers (3 hidden & 1 output) and neuron.
+# Added dropout layers because of overfitting problem from SMOTEENN, and L2 Regularization applies penalty on the size of the weights, forcing model to learn simpler and smaller weights
 model = Sequential([
     Dense(64, activation='relu', kernel_regularizer=l2(0.001), input_shape=(X_resampled.shape[1],)),
     Dropout(0.5),
