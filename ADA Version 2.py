@@ -50,8 +50,8 @@ smote_enn = SMOTEENN(random_state=42)
 X_resampled, y_resampled = smote_enn.fit_resample(X_train_normalized, y_train) #bothsampling on the training set for both the features and the label
 
 # Convert the resampled data back into TensorFlow Datasets
-train_dataset = tf.data.Dataset.from_tensor_slices((X_resampled, y_resampled)).batch(128) 
-test_dataset = tf.data.Dataset.from_tensor_slices((X_test_normalized, y_test)).batch(128) # test set only normalised for the features and label remain unchanged
+train_dataset = tf.data.Dataset.from_tensor_slices((X_resampled, y_resampled)).batch(64) 
+test_dataset = tf.data.Dataset.from_tensor_slices((X_test_normalized, y_test)).batch(64) # test set only normalised for the features and label remain unchanged
 
 # Initial learning rate
 initial_learning_rate = 0.001
