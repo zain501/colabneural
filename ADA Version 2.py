@@ -19,6 +19,8 @@ from collections import Counter
 from tensorflow.keras.optimizers.schedules import ExponentialDecay
 from tensorflow.keras.optimizers import Adam
 import random as python_random
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
 
 # Set seed for reproducibility
 np.random.seed(42)
@@ -82,7 +84,7 @@ model.compile(optimizer=optimizer,
               metrics=['accuracy', tf.keras.metrics.Precision(), tf.keras.metrics.Recall(), tf.keras.metrics.FalseNegatives()])
 
 # Train the model
-model.fit(train_dataset, epochs=100, validation_data=test_dataset)
+history = model.fit(train_dataset, epochs=100, validation_data=test_dataset)
 
 # Model evaluation
 evaluation = model.evaluate(test_dataset)
@@ -90,3 +92,28 @@ evaluation = model.evaluate(test_dataset)
 # Extract and print metrics
 accuracy, precision, recall, fn = evaluation[1], evaluation[2], evaluation[3], evaluation[4]
 print(f'Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, False Negatives: {fn}')
+
+# Plotting the training and validation loss curves
+plt.plot(history.history['loss'], label='Training Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.title('Training and Validation Loss Curves')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+plt.show()
+
+# Lower epoch higher false negative cases. 
+# Generate predictions for the confusion matrix and FNR calculation
+predictions = model.predict(X_test_normalized)
+predicted_classes = (predictions > 0.5).astype(int)
+
+# Generate confusion matrix
+cm = confusion_matrix(y_test, predicted_classes)
+
+# Calculate True Positives (TP) and False Negatives (FN)
+TP = cm[1, 1]
+FN = cm[1, 0]
+
+# Calculate and print False Negative Rate (FNR)
+FNR = FN / (FN + TP)
+print(f'False Negative Rate (Miss Rate): {FNR:.4f}')
