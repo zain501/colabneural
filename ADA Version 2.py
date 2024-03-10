@@ -70,11 +70,13 @@ optimizer = Adam(learning_rate=lr_schedule)
 
 # Model definition
 model = Sequential([
-    Dense(64, activation='relu', kernel_regularizer=l2(0.001), input_shape=(X_resampled.shape[1],)),
+    Dense(30, activation='relu', kernel_regularizer=l2(0.001), input_shape=(X_resampled.shape[1],)),
     Dropout(0.5),
-    Dense(32, activation='relu', kernel_regularizer=l2(0.001)),
+    Dense(30, activation='relu', kernel_regularizer=l2(0.001)),
     Dropout(0.5),
-    Dense(16, activation='relu', kernel_regularizer=l2(0.001)),
+    Dense(15, activation='relu', kernel_regularizer=l2(0.001)),
+    Dense(15, activation='relu', kernel_regularizer=l2(0.001)),
+    Dense(15, activation='relu', kernel_regularizer=l2(0.001)),
     Dense(1, activation='sigmoid')
 ])
 
